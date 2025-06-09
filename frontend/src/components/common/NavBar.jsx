@@ -23,7 +23,7 @@ export default function NavBar() {
         <Link style={linkStyle} to="/">Home</Link>
         <Link style={linkStyle} to="/register">Register</Link>
         <Link style={linkStyle} to="/login">Login</Link>
-        <Link style={linkStyle} to="/test-series">Test Series</Link>
+        <Link style={linkStyle} to="/dashboard">Dashboard</Link>
       </div>
     </nav>
   );

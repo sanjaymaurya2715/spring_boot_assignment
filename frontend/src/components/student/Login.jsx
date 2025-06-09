@@ -34,6 +34,10 @@ export default function Login() {
 
       if (response.status === 200) {
         setMessage("Login successful!");
+        console.log(response.data);
+        console.log(response.data.id);
+        
+        localStorage.setItem("student_key",response.data.id)
         // Optional: save token or user info here
         navigate("/student"); // Redirect to StudentHome
       }

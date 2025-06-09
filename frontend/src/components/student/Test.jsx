@@ -13,6 +13,7 @@ export default function Test() {
   const [answers, setAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [score,setScore] = useState(0);
 
   useEffect(() => {
     if (!testSeriesId) return;
@@ -34,7 +35,7 @@ export default function Test() {
     setSelectedOption(option);
   };
 
-  const handleNext = () => {
+  const handleNext =async () => {
     if (!selectedOption) return alert("Please select an option");
 
     setAnswers((prev) => [
@@ -52,19 +53,48 @@ export default function Test() {
         },
       },
     ]);
+    if(selectedOption==questions[currentQIndex].correctOption){
+      setScore(score+1);
+    }
 
     setSelectedOption("");
     if (currentQIndex + 1 < questions.length) {
       setCurrentQIndex((prev) => prev + 1);
     } else {
       setShowResults(true);
+       try {
+      const resultData = {
+        studentId: localStorage.getItem("student_key"),
+        testSeriesId: testSeriesId,
+        score: score,
+        totalQuestions:questions.length,
+      };
+
+      const response = await axios.post('http://localhost:8080/results/submit', resultData);
+
+      console.log('Score submitted successfully:', response.data);
+      alert('Score submitted!');
+    } catch (error) {
+      console.error('Error submitting score:', error);
+      alert('Failed to submit score');
+    }
     }
   };
 
   if (loading) return <div className="text-center mt-5">Loading questions...</div>;
 
+
+
+
   if (showResults) {
     return (
+      <>
+
+   
+   <div>
+        <h1>Final Score: {score}</h1>
+      </div>
+       
       <div className="container mt-5" style={{ maxWidth: "800px" }}>
         <h3 className="mb-4">Test Completed!</h3>
         {answers.map((ans, index) => (
@@ -94,9 +124,17 @@ export default function Test() {
                 </span>
               </div>
             ))}
+
+          
           </div>
+
+ 
+          
         ))}
       </div>
+
+
+       </>
     );
   }
 
@@ -127,7 +165,10 @@ export default function Test() {
         </div>
         <button className="btn btn-primary mt-4" onClick={handleNext}>
           {currentQIndex + 1 === questions.length ? "Finish Test" : "Next"}
+
+
         </button>
+      
       </div>
     </div>
   );
